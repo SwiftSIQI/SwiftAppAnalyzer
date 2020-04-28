@@ -3,6 +3,7 @@ require 'zip'
 require 'byebug'
 require 'plist'
 require 'fileutils'
+require 'csv'
 
 using Rainbow
 
@@ -59,10 +60,27 @@ ipa_files.each do |path|
 
   current_index += 1
   if otool_result.empty? 
+    final_result.push({
+      name: ipa_name,
+      used: false,
+      details: [],
+    })
     puts "#{current_index}/#{total_count}, #{ipa_name} result: false".yellow
   else
+    final_result.push({
+      name: ipa_name,
+      used: true,
+      details: otool_result.split,
+    })
     puts "#{current_index}/#{total_count}, #{ipa_name} otool result: true".green
   end
 end
 puts ''
 puts "app used swift: #{final_result.length} / #{total_count}"
+
+CSV.open "temp/result.csv", "w" do |csv|
+  csv << ['name', 'used', 'details']
+  final_result.each do |result|
+    csv << [result[:name], result[:used], result[:details].join(",")]
+  end
+end
