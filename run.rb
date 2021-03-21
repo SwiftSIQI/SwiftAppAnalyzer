@@ -76,7 +76,7 @@ ipa_files.each do |path|
   end
 end
 puts ''
-puts "app used swift: #{final_result.length} / #{total_count}"
+puts "app used swift: #{final_result.select { |obj| obj[:used] }.length} / #{total_count}"
 
 CSV.open "temp/result.csv", "w" do |csv|
   csv << ['name', 'used', 'details']
